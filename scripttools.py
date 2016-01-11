@@ -95,16 +95,20 @@ class ScriptTools:
             print 'Processing Plex files from: ', self.plex_path
 
             # Load settings if present in config, otherise default to False
-            self.renameDir = getattr(sections[hdhr_cfg_main], 'hdhr_cfg_renameDir', False)
+            if hasattr(sections[hdhr_cfg_main], hdhr_cfg_renameDir):
+                self.renameDir = sections[hdhr_cfg_main][hdhr_cfg_renameDir]
             print 'Rename Directory to match TVDB show name: ', self.renameDir
 
-            self.renameFile = getattr(sections[hdhr_cfg_main], 'hdhr_cfg_renameFile', False)
+            if hasattr(sections[hdhr_cfg_main], hdhr_cfg_renameFile):
+                self.renameFile = sections[hdhr_cfg_main][hdhr_cfg_renameFile]
             print 'Rename Files Enabled: ', self.renameFile
 
-            self.force = getattr(sections[hdhr_cfg_main], 'hdhr_cfg_forceUpdate', False)
+            if hasattr(sections[hdhr_cfg_main], hdhr_cfg_forceUpdate):
+                self.force = sections[hdhr_cfg_main][hdhr_cfg_forceUpdate]
             print 'Force Updates Enabled: ', self.force
 
-            self.linkToPlex = getattr(sections[hdhr_cfg_main], 'hdhr_cfg_linkToPlex', False)
+            if hasattr(sections[hdhr_cfg_main], hdhr_cfg_linkToPlex):
+                self.linkToPlex = sections[hdhr_cfg_main][hdhr_cfg_linkToPlex]
             print 'Symlink to Plex Enabled: ', self.linkToPlex
 
             if sections[hdhr_cfg_main][hdhr_cfg_skip_shows]:
