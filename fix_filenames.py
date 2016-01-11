@@ -183,7 +183,7 @@ if __name__ == "__main__":
             if not os.path.exists(os.path.join(plex_path, showname)):
                 os.makedirs(plex_path, showname)
 
-            if not os.path.islink(os.path.join(plex_path, showname, os.path.basename(f))
+            if not os.path.islink(os.path.join(plex_path, showname, os.path.basename(f))):
                 os.symlink(f, os.path.join(plex_path, showname, os.path.basename(f)))
 
     logging.info('------------------------------------------------------------')
