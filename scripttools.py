@@ -25,6 +25,7 @@ hdhr_cfg_autodelete = 'autodelete'
 hdhr_cfg_renameDir = 'renamedir'
 hdhr_cfg_renameFile = 'renamefile'
 hdhr_cfg_forceUpdate = 'forceupdate'
+hdhr_cfg_linkToPlex = 'linkplex'
 
 class ScriptTools:
 
@@ -35,6 +36,7 @@ class ScriptTools:
         self.renameDir = False
         self.renameFile = False
         self.force = False
+        self.linkToPlex = False
 
         arg_parser = argparse.ArgumentParser(description='Process command line args')
         for n in hdhr_args_list:
@@ -102,6 +104,9 @@ class ScriptTools:
             self.force = getattr(sections[hdhr_cfg_main], 'hdhr_cfg_forceUpdate', False)
             print 'Force Updates Enabled: ', self.force
 
+            self.linkToPlex = getattr(sections[hdhr_cfg_main], 'hdhr_cfg_linkToPlex', False)
+            print 'Symlink to Plex Enabled: ', self.linkToPlex
+
             if sections[hdhr_cfg_main][hdhr_cfg_skip_shows]:
                 self.skip_list = sections[hdhr_cfg_main][hdhr_cfg_skip_shows]
                 print 'Setting up Skip Shows: ', self.skip_list
@@ -151,3 +156,6 @@ class ScriptTools:
 
     def forceEnabled(self):
         return self.force
+
+    def linkToPlex(self):
+        return self.linkToPlex
