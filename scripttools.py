@@ -40,9 +40,9 @@ class ScriptTools:
         for n in hdhr_args_list:
             arg_parser.add_argument(n)
         self.args = arg_parser.parse_args()
-    
+
         if self.args.config:
-            if os.path.exists(self.args.config): 
+            if os.path.exists(self.args.config):
                 self.parse_config_file(None)
             else:
                 print "Config file specified not found - " + self.args.config
@@ -53,8 +53,8 @@ class ScriptTools:
             else:
                 print "No config file found - reverting to interactive"
                 self.interactive = True
-    
-        # user can always override the settings.            
+
+        # user can always override the settings.
         if self.args.interactive:
             self.interactive = True
 
@@ -62,21 +62,21 @@ class ScriptTools:
         global logging
         global dvr_path
         global plex_path
-        
+
         config = ConfigParser.ConfigParser()
-        if self.args.config: 
+        if self.args.config:
             config.read(self.args.config)
         else:
             config.read(config_file)
-        
+
         sections = {}
-    
+
         # Parse out the config info from the config file
         for section_name in config.sections():
             sections[section_name] = {}
             for name, value in config.items(section_name):
                 sections[section_name][name] = value
-    
+
         if hdhr_cfg_main in sections.keys():
             if sections[hdhr_cfg_main][hdhr_cfg_path_dvr]:
                 self.dvr_path = sections[hdhr_cfg_main][hdhr_cfg_path_dvr]
@@ -84,7 +84,7 @@ class ScriptTools:
             if not self.dvr_path.endswith(os.sep):
                 self.dvr_path+=os.sep
             print 'Processing DVR files from: ', self.dvr_path
-            
+
             if sections[hdhr_cfg_main][hdhr_cfg_path_plex]:
                 self.plex_path = sections[hdhr_cfg_main][hdhr_cfg_path_plex]
             #ensure we have trailing path seperator
@@ -92,31 +92,20 @@ class ScriptTools:
                 self.plex_path+=os.sep
             print 'Processing Plex files from: ', self.plex_path
 
-            if sections[hdhr_cfg_main][hdhr_cfg_renameDir]:
-                if sections[hdhr_cfg_main][hdhr_cfg_renameDir] == 'True':
-                    self.renameDir = True
-                else:
-                    self.renameDir = False
+            # Load settings if present in config, otherise default to False
+            self.renameDir = getattr(sections[hdhr_cfg_main], 'hdhr_cfg_renameDir', False)
             print 'Rename Directory to match TVDB show name: ', self.renameDir
 
-            if sections[hdhr_cfg_main][hdhr_cfg_renameFile]:
-                if sections[hdhr_cfg_main][hdhr_cfg_renameFile] == 'True':
-                    self.renameFile = True
-                else:
-                    self.renameFile = False
+            self.renameFile = getattr(sections[hdhr_cfg_main], 'hdhr_cfg_renameFile', False)
             print 'Rename Files Enabled: ', self.renameFile
 
-            if sections[hdhr_cfg_main][hdhr_cfg_forceUpdate]:
-                if sections[hdhr_cfg_main][hdhr_cfg_forceUpdate] == 'True':
-                    self.force = True
-                else:
-                    self.force = False
+            self.force = getattr(sections[hdhr_cfg_main], 'hdhr_cfg_forceUpdate', False)
             print 'Force Updates Enabled: ', self.force
 
             if sections[hdhr_cfg_main][hdhr_cfg_skip_shows]:
                 self.skip_list = sections[hdhr_cfg_main][hdhr_cfg_skip_shows]
                 print 'Setting up Skip Shows: ', self.skip_list
-            
+
             # Extract Logging Information
             loglevel = 'warning'
             if self.args.loglevel:
@@ -124,9 +113,9 @@ class ScriptTools:
             else:
                 if sections[hdhr_cfg_main][hdhr_cfg_loglevel]:
                     loglevel = sections[hdhr_cfg_main][hdhr_cfg_loglevel]
-    
+
             print 'Log Level is set to: ', loglevel
-    
+
             if self.args.logfile:
                 logfile = self.args.logfile
                 logging.basicConfig(filename=logfile,
@@ -144,7 +133,7 @@ class ScriptTools:
 
     def get_skip_shows(self):
         return self.skip_list
-    
+
     def get_dvr_path(self):
         return self.dvr_path
 
@@ -153,7 +142,7 @@ class ScriptTools:
 
     def isInteractive(self):
         return self.interactive
-        
+
     def fileRename(self):
         return self.renameFile
 
