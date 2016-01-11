@@ -48,7 +48,7 @@ def parse_file_for_data(filename):
     return parser.extract_metadata(tempMD)
 
 def isSpecialShow(showname):
-	  
+
     if not shows2skip:
         return False
     for show in shows2skip:
@@ -65,7 +65,7 @@ def extract_metadata(metadata):
     epNumber = md.extract_epNumber()
     epAirDate = md.extract_epAirDate()
     epTitle = md.extract_epTitle()
-    
+
     # Need to workaround some bad titles that US TV and thetvdb.com are in conflict for.
     if not isSpecialShow(show):
         tvdbEpData = md.getTVDBInfo(show,epAirDate)
@@ -98,11 +98,11 @@ def is_already_fixed(filename):
     show_file, file_ext = os.path.splitext(filename)
     base_name = os.path.basename(show_file)
     parts = base_name.split('-')
-    
+
     regexPatSearch = re.compile(r'-S\d\dE\d\d-')
     if regexPatSearch.search(filename):
         logging.debug('Matched SxxExx in filename: ' + filename)
-    
+
     if len(parts) >= 2:
         logging.debug(base_name + 'contains 2 or greater parts, might be fixed')
         for x in range(len(parts)):
@@ -152,6 +152,7 @@ if __name__ == "__main__":
     logging.info('-                   '+strftime("%Y-%m-%d %H:%M:%S")+'                    -')
     logging.info('------------------------------------------------------------')
     shows = get_shows_in_dir(tools.get_dvr_path())
+    plex_path = tools.get_plex_path()
 
     for show in shows:
         episodes = get_episodes_in_show(show)
@@ -159,7 +160,7 @@ if __name__ == "__main__":
 
     shows2skip = tools.get_skip_shows().split(',')
     logging.debug('Skip Shows ' + str(shows2skip))
-    
+
     for f in files:
         if is_already_fixed(f) & (not tools.forceEnabled()):
             logging.info('SKIPPING: Already fixed ' + f)
@@ -175,9 +176,15 @@ if __name__ == "__main__":
         else:
             logging.info('Setting showname to: ' + md['show'])
             showname = md['show']
-        
+
         rename_episode(f,showname,md['season'],md['epnum'],md['eptitle'],md['special'],tools.dirRename(), tools.forceEnabled())
         logging.info('Completed for : ' + f)
+        if os.path.exists(plex_path) and tools.linkToPlex():
+            if not os.path.exists(os.path.join(plex_path, showname)):
+                os.makedirs(plex_path, showname)
+
+            if not os.path.islink(os.path.join(plex_path, showname, os.path.basename(f))
+                os.symlink(f, os.path.join(plex_path, showname, os.path.basename(f)))
 
     logging.info('------------------------------------------------------------')
     logging.info('-              HDHR TS MetaData Tool Complete              -')
